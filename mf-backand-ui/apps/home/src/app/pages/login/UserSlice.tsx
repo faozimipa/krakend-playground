@@ -2,16 +2,20 @@ import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { AppRootState } from 'libs/store';
 
 import AuthService from 'libs/services/authService';
-import { boolean } from 'yup';
-import { stringify } from 'querystring';
-
 const dataUser = localStorage.getItem('user');
-
 const user = dataUser ? JSON.parse(dataUser) : null;
-
 export interface Credential {
   email: string;
   password: string;
+}
+
+export interface InitState {
+  isLoggedIn: boolean;
+  userRoles: Array<String>;
+  userPermissions: Array<String>;
+  isLoading: boolean;
+  user: any;
+  error: any;
 }
 export interface MyError {
   message: string;
@@ -26,7 +30,7 @@ export const login = createAsyncThunk(
         credential.email,
         credential.password
       );
-      return { user: data.user };
+      return { user: data.user, userRoles: data.roles, userPermissions:data.permissions };
     } catch (error: any) {
       const message =
         (error.response &&
@@ -49,10 +53,26 @@ export const removeErrorData = createAsyncThunk(
     return true;
   }
 );
-let errorData: any;
-const initialState = user
-  ? { isLoggedIn: false, isLoading: false, user: user, error: errorData }
-  : { isLoggedIn: false, isLoading: false, user: null, error: null };
+
+// let initialState: InitState;
+
+const initialState: InitState = user
+  ? {
+      isLoggedIn: false,
+      userRoles: [],
+      userPermissions: [],
+      isLoading: false,
+      user: user,
+      error: null,
+    }
+  : {
+      isLoggedIn: false,
+      userRoles: [],
+      userPermissions: [],
+      isLoading: false,
+      user: null,
+      error: null,
+    };
 
 const authSlice = createSlice({
   name: 'auth',
@@ -67,6 +87,8 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(login.fulfilled, (state, action) => {
+      state.userRoles = action.payload.userRoles;
+      state.userPermissions = action.payload.userPermissions;
       state.isLoggedIn = true;
       state.user = action.payload.user;
       state.error = null;

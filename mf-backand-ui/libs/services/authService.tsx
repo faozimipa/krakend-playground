@@ -28,6 +28,16 @@ class AuthService {
     if (userStr) return JSON.parse(userStr);
     return null;
   }
+  getUserRoles(){
+    const userRoles = localStorage.getItem('roles');
+    if (userRoles) return JSON.parse(userRoles);
+    return [];
+  }
+  getUserPermissions(){
+    const userPermissions = localStorage.getItem('permissions');
+    if (userPermissions) return JSON.parse(userPermissions);
+    return [];
+  }
 }
 
 export default new AuthService();

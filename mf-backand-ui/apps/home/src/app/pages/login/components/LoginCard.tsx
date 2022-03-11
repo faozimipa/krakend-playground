@@ -13,7 +13,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import FormControl from '@mui/material/FormControl';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import LockIcon from '@mui/icons-material/Lock';
-
+import ZiLoading from 'libs/components/ZiLoading';
 
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
@@ -87,11 +87,9 @@ export default function LoginCard() {
   };
 
   const [isOpen, setIsOpen] = useState(false);
-  if (1 == 1) {
-    <Navigate to="/dashboards/crypto" replace />;
-  }
   return (
     <Grid container direction="row" justifyContent="center" alignItems="center">
+      {data.isLoading && <ZiLoading />}
       {data.isLoggedIn?
       <Navigate to="/dashboards/crypto" replace />  
     :

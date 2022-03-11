@@ -3,6 +3,7 @@ import { useLocation, matchPath } from 'react-router-dom';
 import SidebarMenuItem from './item';
 import menuItems, { MenuItem } from './items';
 import { styled } from '@mui/material/styles';
+import { useAppSelector } from 'libs/hooks';
 
 const MenuWrapper = styled(List)(
   ({ theme }) => `
@@ -126,13 +127,16 @@ const SubMenuWrapper = styled(List)(
 
 const renderSidebarMenuItems = ({
   items,
-  path
+  path,
 }: {
   items: MenuItem[];
   path: string;
 }): JSX.Element => (
   <SubMenuWrapper>
-    {/* {items.reduce((ev, item) => reduceChildRoutes({ ev, item, path }), [])} */}
+    {items.reduce(
+      (ev, item) => reduceChildRoutes({ ev, item, path }),
+      [] as JSX.Element[]
+    )}
   </SubMenuWrapper>
 );
 
@@ -147,54 +151,117 @@ const reduceChildRoutes = ({
 }): Array<JSX.Element> => {
   const key = item.name;
 
-  const exactMatch = item.link
-    ? !!matchPath(
-        {
-          path: item.link,
-          end: true,
-        },
-        path
-      )
-    : false;
+  const rolesLink = item.roles;
+  //do check user roles wit menu roles
+  if (rolesLink) {
+    const { isLoggedIn, user, userRoles, isLoading } = useAppSelector(
+      (state) => state.authReducer
+    );
 
-  if (item.items) {
-    const partialMatch = item.link
+    const userHasRequiredRole =
+      user && rolesLink.some((role) => userRoles.includes(role));
+
+    if (userHasRequiredRole) {
+      const exactMatch = item.link
+        ? !!matchPath(
+            {
+              path: item.link,
+              end: true,
+            },
+            path
+          )
+        : false;
+
+      if (item.items) {
+        const partialMatch = item.link
+          ? !!matchPath(
+              {
+                path: item.link,
+                end: false,
+              },
+              path
+            )
+          : false;
+
+        ev.push(
+          <SidebarMenuItem
+            key={key}
+            active={partialMatch}
+            open={partialMatch}
+            name={item.name}
+            icon={item.icon}
+            link={item.link}
+            badge={item.badge}
+          >
+            {renderSidebarMenuItems({
+              path,
+              items: item.items,
+            })}
+          </SidebarMenuItem>
+        );
+      } else {
+        ev.push(
+          <SidebarMenuItem
+            key={key}
+            active={exactMatch}
+            name={item.name}
+            link={item.link}
+            badge={item.badge}
+            icon={item.icon}
+          />
+        );
+      }
+    }
+  } else {
+    const exactMatch = item.link
       ? !!matchPath(
           {
             path: item.link,
-            end: false,
+            end: true,
           },
           path
         )
       : false;
 
-    ev.push(
-      <SidebarMenuItem
-        key={key}
-        active={partialMatch}
-        open={partialMatch}
-        name={item.name}
-        icon={item.icon}
-        link={item.link}
-        badge={item.badge}
-      >
-        {renderSidebarMenuItems({
-          path,
-          items: item.items
-        })}
-      </SidebarMenuItem>
-    );
-  } else {
-    ev.push(
-      <SidebarMenuItem
-        key={key}
-        active={exactMatch}
-        name={item.name}
-        link={item.link}
-        badge={item.badge}
-        icon={item.icon}
-      />
-    );
+    if (item.items) {
+      const partialMatch = item.link
+        ? !!matchPath(
+            {
+              path: item.link,
+              end: false,
+            },
+            path
+          )
+        : false;
+
+      ev.push(
+        <SidebarMenuItem
+          key={key}
+          active={partialMatch}
+          open={partialMatch}
+          name={item.name}
+          icon={item.icon}
+          link={item.link}
+          badge={item.badge}
+        >
+          {renderSidebarMenuItems({
+            path,
+            items: item.items,
+          })}
+        </SidebarMenuItem>
+      );
+    } else {
+      ev.push(
+        <SidebarMenuItem
+          key={key}
+          active={exactMatch}
+          name={item.name}
+          link={item.link}
+          badge={item.badge}
+          icon={item.icon}
+        />
+      );
+    }
   }
 
   return ev;
@@ -216,7 +283,7 @@ function SidebarMenu() {
         >
           {renderSidebarMenuItems({
             items: section.items,
-            path: location.pathname
+            path: location.pathname,
           })}
         </MenuWrapper>
       ))}

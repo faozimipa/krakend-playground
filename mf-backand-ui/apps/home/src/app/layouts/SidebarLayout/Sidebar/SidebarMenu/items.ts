@@ -22,11 +22,13 @@ export interface MenuItem {
   badge?: string;
   items?: MenuItem[];
   name: string;
+  roles? : string[];
 }
 
 export interface MenuItems {
   items: MenuItem[];
   heading: string;
+  roles?: string[];
 }
 
 const menuItems: MenuItems[] = [
@@ -62,6 +64,26 @@ const menuItems: MenuItems[] = [
         name: 'Transactions',
         icon: TableChartTwoToneIcon,
         link: '/management/transactions'
+      },
+      {
+        name: 'Users',
+        icon: AccountCircleTwoToneIcon,
+        link: '/management/users',
+        roles: ['super-admin','admin'],
+        items: [
+          {
+            name: 'Data',
+            link: '/management/users/data'
+          },
+          {
+            name: 'Roles',
+            link: '/management/users/roles'
+          },
+          {
+            name: 'Permissions',
+            link: '/management/users/permissions'
+          }
+        ]
       },
       {
         name: 'User Profile',

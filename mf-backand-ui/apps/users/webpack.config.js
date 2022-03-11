@@ -20,7 +20,7 @@ module.exports = (config, context) => {
         name: 'users',
         filename: 'usersEntry.js',
         exposes: {
-          './UsersEntry': './src/app/components/UsersEntry',
+          './UsersEntry': './src/app/pages/data/UsersEntry',
         },
         shared: {
           ...deps,

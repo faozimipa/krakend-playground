@@ -74,6 +74,17 @@ const StatusMaintenance = Loader(
   lazy(() => import('./content/pages/Status/Maintenance'))
 );
 
+// users menu
+
+const UsersEntry = Loader(lazy(() => import('users/UsersEntry')));
+
+const RolesContent = Loader(
+  lazy(() => import('apps/users/src/app/pages/roles/RolesContent'))
+);
+
+const PermissionsContent = Loader(
+  lazy(() => import('apps/users/src/app/pages/permissions/PermissionsContent'))
+);
 const routes: PartialRouteObject[] = [
   {
     path: '*',
@@ -132,7 +143,11 @@ const routes: PartialRouteObject[] = [
       },
       {
         path: 'crypto',
-        element: <PrivateRoute><Crypto /></PrivateRoute>,
+        element: (
+          <PrivateRoute roles={['super-admin', 'admin', 'manager']}>
+            <Crypto />
+          </PrivateRoute>
+        ),
       },
       {
         path: 'messenger',
@@ -151,6 +166,43 @@ const routes: PartialRouteObject[] = [
       {
         path: 'transactions',
         element: <Transactions />,
+      },
+      {
+        path: 'users',
+        children: [
+          {
+            path: '/',
+            element: (
+              <PrivateRoute roles={['super-admin', 'admin', 'manager']}>
+                <UsersEntry />
+              </PrivateRoute>
+            ),
+          },
+          {
+            path: 'data',
+            element: (
+              <PrivateRoute roles={['super-admin', 'admin', 'manager']}>
+                <UsersEntry />
+              </PrivateRoute>
+            ),
+          },
+          {
+            path: 'roles',
+            element: (
+              <PrivateRoute roles={['super-admin', 'admin', 'manager']}>
+                <RolesContent />
+              </PrivateRoute>
+            ),
+          },
+          {
+            path: 'permissions',
+            element: (
+              <PrivateRoute roles={['super-admin', 'admin', 'manager']}>
+                <PermissionsContent />
+              </PrivateRoute>
+            ),
+          },
+        ],
       },
       {
         path: 'profile',
