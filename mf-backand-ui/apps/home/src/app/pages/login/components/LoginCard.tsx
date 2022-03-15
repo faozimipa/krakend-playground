@@ -5,6 +5,7 @@ import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
 import Typography from '@mui/material/Typography';
 
 import Input from '@mui/material/Input';
@@ -19,7 +20,7 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Grid from '@mui/material/Grid';
 import { useAppSelector, useAppDispatch } from 'libs/hooks';
-import { Credential, login, selectState, setLoading } from '../UserSlice';
+import { Credential, login, removeError, selectState, setLoading } from '../UserSlice';
 
 import { Alert, Snackbar } from '@mui/material';
 import { Navigate } from 'react-router-dom';
@@ -82,7 +83,7 @@ export default function LoginCard() {
     await dispatch(setLoading);
     await dispatch(login(cred));
     if (data.error) {
-      setIsOpen(false);
+      setIsOpen(true);
     }
   };
 
@@ -90,83 +91,108 @@ export default function LoginCard() {
   return (
     <Grid container direction="row" justifyContent="center" alignItems="center">
       {data.isLoading && <ZiLoading />}
-      {data.isLoggedIn?
-      <Navigate to="/dashboards/crypto" replace />  
-    :
-      <Grid item xs={3}>
-        <Card sx={{ minWidth: 225 }}>
-          <CardContent>
-            <Typography
-              sx={{ fontSize: 14 }}
-              color="text.secondary"
-              gutterBottom
+      {data.isLoggedIn ? (
+        <Navigate to="/dashboards/crypto" replace />
+      ) : (
+        <Grid item xs={3}>
+          <Card sx={{ minWidth: 225 }}>
+            <CardContent>
+              <Typography
+                sx={{ fontSize: 14 }}
+                color="text.secondary"
+                gutterBottom
+              >
+                Word of the Day
+              </Typography>
+              <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
+                <AccountCircle
+                  sx={{ color: 'action.active', mr: 1, my: 0.5 }}
+                />
+                <FormControl sx={{ m: 1, width: '25ch' }} variant="standard">
+                  <InputLabel htmlFor="standard-adornment-username">
+                    Username
+                  </InputLabel>
+                  <Input
+                    id="standard-adornment-username"
+                    value={values.username}
+                    onChange={handleChange('username')}
+                  />
+                </FormControl>
+              </Box>
+              <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
+                <LockIcon sx={{ color: 'action.active', mr: 1, my: 0.5 }} />
+
+                <FormControl sx={{ m: 1, width: '25ch' }} variant="standard">
+                  <InputLabel htmlFor="standard-adornment-password">
+                    Password
+                  </InputLabel>
+
+                  <Input
+                    id="standard-adornment-password"
+                    type={values.isShowPassword ? 'text' : 'password'}
+                    value={values.password}
+                    onChange={handleChange('password')}
+                    endAdornment={
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={handleClickShowPassword}
+                          onMouseDown={handleMouseDownPassword}
+                        >
+                          {values.isShowPassword ? (
+                            <VisibilityOff />
+                          ) : (
+                            <Visibility />
+                          )}
+                        </IconButton>
+                      </InputAdornment>
+                    }
+                  />
+                </FormControl>
+              </Box>
+            </CardContent>
+            <CardActions>
+              <Button
+                size="small"
+                variant="contained"
+                onClick={() => doLogin()}
+              >
+                Login
+              </Button>
+            </CardActions>
+          </Card>
+          <Snackbar
+            open={isOpen || data.error}
+            autoHideDuration={6000}
+            onClose={() => {
+              setIsOpen(false);
+            }}
+            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+            message={data.error}
+          >
+            <Alert
+              variant="filled"
+              severity="error"
+              sx={{ width: '100%' }}
+              action={
+                <IconButton
+                  aria-label="close"
+                  color="inherit"
+                  size="small"
+                  onClick={() => {
+                    setIsOpen(false);
+                    dispatch(removeError());
+                  }}
+                >
+                  <CloseIcon fontSize="inherit" />
+                </IconButton>
+              }
             >
-              Word of the Day 
-            </Typography>
-            <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
-              <AccountCircle sx={{ color: 'action.active', mr: 1, my: 0.5 }} />
-              <FormControl sx={{ m: 1, width: '25ch' }} variant="standard">
-                <InputLabel htmlFor="standard-adornment-username">
-                  Username
-                </InputLabel>
-                <Input
-                  id="standard-adornment-username"
-                  value={values.username}
-                  onChange={handleChange('username')}
-                />
-              </FormControl>
-            </Box>
-            <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
-              <LockIcon sx={{ color: 'action.active', mr: 1, my: 0.5 }} />
-
-              <FormControl sx={{ m: 1, width: '25ch' }} variant="standard">
-                <InputLabel htmlFor="standard-adornment-password">
-                  Password
-                </InputLabel>
-
-                <Input
-                  id="standard-adornment-password"
-                  type={values.isShowPassword ? 'text' : 'password'}
-                  value={values.password}
-                  onChange={handleChange('password')}
-                  endAdornment={
-                    <InputAdornment position="end">
-                      <IconButton
-                        aria-label="toggle password visibility"
-                        onClick={handleClickShowPassword}
-                        onMouseDown={handleMouseDownPassword}
-                      >
-                        {values.isShowPassword ? (
-                          <VisibilityOff />
-                        ) : (
-                          <Visibility />
-                        )}
-                      </IconButton>
-                    </InputAdornment>
-                  }
-                />
-              </FormControl>
-            </Box>
-          </CardContent>
-          <CardActions>
-            <Button size="small" variant="contained" onClick={() => doLogin()}>
-              Login
-            </Button>
-          </CardActions>
-        </Card>
-        <Snackbar
-          onClose={() => {
-            setIsOpen(false);
-          }}
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-          message={data.error}
-        >
-          <Alert severity="warning" sx={{ width: '100%' }}>
-            {data.error}
-          </Alert>
-        </Snackbar>
-      </Grid>
-}
+              {data.error}
+            </Alert>
+          </Snackbar>
+        </Grid>
+      )}
     </Grid>
   );
 }

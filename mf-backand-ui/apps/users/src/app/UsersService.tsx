@@ -44,11 +44,31 @@ class UsersService {
     });
   }
 
-  getAllPermissions() {
-    return axios.get(API_URL + 'permissions', apiConfig).then((response) => {
+  editRole(role: any) {
+    return axios.put(API_URL + 'roles/edit/'+role.id, role, apiConfig).then((response) => {
       return response.data;
     });
   }
+
+
+  getAllRolesAndPermissions() {
+    return axios.get(API_URL + 'roles_permissions', apiConfig).then((response) => {
+      return response.data;
+    });
+  }
+
+  getPermissionsByRoleName(roleName: string) {
+    return axios.get(API_URL+'permissions/name/'+roleName, apiConfig).then((response) => {
+      return response.data;
+    })
+  }
+
+  syncRolePermissions (roleName:string, permissions: any) {
+    return axios.post(API_URL+'permissions/sync/'+roleName,permissions, apiConfig).then((response) => {
+      return response.data;
+    })
+  }
+
 }
 
 export default new UsersService();

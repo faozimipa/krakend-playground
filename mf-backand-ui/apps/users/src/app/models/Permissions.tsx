@@ -1,5 +1,5 @@
 export interface Permission {
-    id:string
-    name:string
-    description:string
+    ID:string
+    Name:string
+    Description:string
 }
