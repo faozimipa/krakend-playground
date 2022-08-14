@@ -1,3 +1,4 @@
+/* eslint-disable @nrwl/nx/enforce-module-boundaries */
 import {
   Accordion,
   AccordionDetails,
@@ -124,7 +125,7 @@ function RolesContent() {
     //permissionName
     console.log(event.target.name);
     const permissionName = event.target.name;
-    var data: string[] = [];
+    let data: string[] = [];
     if (permissionsRoleList.includes(permissionName)) {
       data = permissionsRoleList.filter((val) => val != permissionName);
     } else {
@@ -134,7 +135,7 @@ function RolesContent() {
   };
 
   const checkPermission = (name: string) => {
-    var result = false;
+    let result = false;
     if (permissionsRoleList.includes(name)) {
       result = true;
     }
@@ -143,14 +144,14 @@ function RolesContent() {
 
   const submitNewRole = async () => {
     setNewLoading(true);
-    var data = {
+    const data = {
       id: actionID.toString(),
       name: newRoleName,
       description: newRoleDescription,
     };
 
     try {
-      var save;
+      let save;
       if (actionID == '') {
         save = await UsersService.addRole(data);
       } else {

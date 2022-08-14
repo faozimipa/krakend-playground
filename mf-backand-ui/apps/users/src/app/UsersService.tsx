@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { Role } from './models/Role';
 const API_URL = 'http://localhost:8000/api/';
 let apiConfig = {
   headers: {
@@ -45,7 +44,7 @@ class UsersService {
   }
 
   editRole(role: any) {
-    return axios.put(API_URL + 'roles/edit/'+role.id, role, apiConfig).then((response) => {
+    return axios.put(API_URL + 'roles/edit/' + role.id, role, apiConfig).then((response) => {
       return response.data;
     });
   }
@@ -58,15 +57,27 @@ class UsersService {
   }
 
   getPermissionsByRoleName(roleName: string) {
-    return axios.get(API_URL+'permissions/name/'+roleName, apiConfig).then((response) => {
+    return axios.get(API_URL + 'permissions/name/' + roleName, apiConfig).then((response) => {
       return response.data;
     })
   }
 
-  syncRolePermissions (roleName:string, permissions: any) {
-    return axios.post(API_URL+'permissions/sync/'+roleName,permissions, apiConfig).then((response) => {
+  syncRolePermissions(roleName: string, permissions: any) {
+    return axios.post(API_URL + 'permissions/sync/' + roleName, permissions, apiConfig).then((response) => {
       return response.data;
     })
+  }
+
+  getAllPermissions() {
+    return axios.get(API_URL + 'permissions', apiConfig).then((response) => {
+      return response.data;
+    });
+  }
+
+  addPermission(permission: any) {
+    return axios.post(API_URL + 'permissions', permission, apiConfig).then((response) => {
+      return response.data;
+    });
   }
 
 }

@@ -1,3 +1,4 @@
+/* eslint-disable @nrwl/nx/enforce-module-boundaries */
 import { FC, ChangeEvent, useState } from 'react';
 import { format, formatDistanceToNowStrict } from 'date-fns';
 import * as moment from 'moment';

@@ -12,7 +12,7 @@ export const getAll = createAsyncThunk(
   'permissions/getAll',
   async (_token, thunkAPI) => {
     try {
-      const data = await UsersService.getAllRoles();
+      const data = await UsersService.getAllPermissions();
       return {
         permissions: data,
       };
